@@ -2,6 +2,7 @@
 build/
 dist/
 *.egg-info/
+docs/site/
 
 # Python
 __pycache__/
@@ -25,8 +26,8 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 
-# MkDocs
-site/
+# Zensical (built docs site)
+docs/site/
 
 # Editor/IDE
 *.swp

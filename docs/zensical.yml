@@ -1,0 +1,43 @@
+site_name: pymmich
+site_description: CLI for uploading and downloading folders and files to/from an Immich server
+site_url: https://github.com/egenix/pymmich
+repo_url: https://github.com/egenix/pymmich
+edit_uri: ""
+
+# Paths are resolved relative to this config file (docs/zensical.yml).
+# Sources live in docs/content/ (kept separate from config so
+# zensical.yml itself doesn't get copied into the built site).
+# Built output lands at docs/site/ — Zensical refuses site_dir paths
+# outside the config's parent.
+docs_dir: content
+
+theme:
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Commands:
+      - Upload: commands/upload.md
+      - Download: commands/download.md
+      - List: commands/list.md
+      - List users: commands/list-users.md
+      - Share: commands/share.md
+      - Unshare: commands/unshare.md
+  - Configuration: configuration.md
+  - API key permissions: api-permissions.md
+  - Distribution: distribution.md
+  - Development: development.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true

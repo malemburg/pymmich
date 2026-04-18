@@ -18,7 +18,9 @@ import sys
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # Build artefacts — removed by both ``clean`` and ``distclean``.
-BUILD_DIRS = ("build", "dist", "site", ".coverage", "htmlcov")
+# ``docs/site`` is where Zensical writes the built docs (Zensical
+# refuses to write its output outside the config's parent dir).
+BUILD_DIRS = ("build", "dist", "docs/site", ".coverage", "htmlcov")
 
 # Extra cache-y directories swept up by ``distclean``.
 CACHE_DIR_NAMES = ("__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache")

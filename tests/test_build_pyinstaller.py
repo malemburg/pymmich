@@ -122,7 +122,7 @@ def test_all_runtime_deps_are_pure_python():
 
     Walk the packages installed into the current venv and flag any
     that ship an extension module (`.so`/`.pyd`) under the pymmich
-    runtime closure. pytest/respx/mkdocs are *test* deps and are
+    runtime closure. pytest/respx/zensical are *test* deps and are
     explicitly skipped — PyInstaller never sees them.
     """
     import pymmich  # noqa: F401

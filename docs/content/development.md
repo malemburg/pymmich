@@ -14,7 +14,9 @@ and a top-level [`justfile`](https://github.com/casey/just).
 ├── src/
 │   └── pymmich/        # library + CLI source
 ├── tests/              # pytest suite
-├── docs/               # mkdocs site source (including docs/mkdocs.yml)
+├── docs/
+│   ├── zensical.yml    # Zensical config
+│   └── content/        # Markdown sources (logo, assets, commands/, …)
 └── scripts/            # build helpers (pyinstaller, cleanup, ...)
 ```
 

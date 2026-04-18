@@ -50,13 +50,13 @@ test *args:
 run *args:
     uv run pymmich {{args}}
 
-# Build the docs site into ./site.
+# Build the docs site into ./docs/site.
 docs:
-    uv run --group dev mkdocs build -f docs/mkdocs.yml
+    uv run --group dev zensical build -f docs/zensical.yml
 
-# Live-reload docs server at http://127.0.0.1:8000.
+# Live-reload docs server at http://127.0.0.1:8081.
 docs-serve:
-    uv run --group dev mkdocs serve -f docs/mkdocs.yml -a 0.0.0.0:8081
+    uv run --group dev zensical serve -f docs/zensical.yml -a 0.0.0.0:8081
 
 # Remove build and distribution artefacts.
 clean:

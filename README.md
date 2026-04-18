@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/logo.svg" alt="pymmich logo" width="180"/>
+  <img src="docs/content/assets/logo.svg" alt="pymmich logo" width="180"/>
 </p>
 
 # pymmich
@@ -41,7 +41,7 @@ Python ≥ 3.13 is required. `pymmich` runs on Linux, Windows and macOS.
 If you'd rather not have Python on the target machine at all, pymmich
 also ships as a single-file **standalone executable** for each OS
 (produced with PyInstaller). See
-[docs/distribution.md](docs/distribution.md) for details.
+[docs/content/distribution.md](docs/content/distribution.md) for details.
 
 ## Configuration
 
@@ -65,7 +65,7 @@ permissions, the current set of permissions `pymmich` needs is:
 `albumUser.delete`, `asset.read`, `asset.upload`, `asset.download`,
 `user.read`.
 
-See [docs/api-permissions.md](docs/api-permissions.md) for the per-command
+See [docs/content/api-permissions.md](docs/content/api-permissions.md) for the per-command
 breakdown.
 
 ## Usage
