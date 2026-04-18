@@ -1,0 +1,51 @@
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Dependencies
+uv.lock
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# MkDocs
+site/
+
+# Editor/IDE
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Agents
+agent/
+CLAUDE.md
+.claude*
+resources/
+
+# Local private config
+private/
+tmp/

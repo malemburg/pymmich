@@ -1,0 +1,75 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!--Generator: Xara Designer (www.xara.com), SVG filter version: 6.7.0.0-->
+<svg fill="none" fill-rule="evenodd" stroke="black" stroke-width="0.501" stroke-linejoin="bevel" stroke-miterlimit="10" font-family="Times New Roman" font-size="16" style="font-variant-ligatures:none" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1" overflow="visible" width="181.5pt" height="181.5pt" viewBox="19.569 -743.319 181.5 181.5">
+ <defs>
+  <linearGradient id="LinearGradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="180" y2="-180" gradientTransform="translate(20.319 742.569)">
+   <stop offset="0" stop-color="#ff4e50"/>
+   <stop offset="0.25" stop-color="#ffb703"/>
+   <stop offset="0.5" stop-color="#2ec4b6"/>
+   <stop offset="0.75" stop-color="#3a86ff"/>
+   <stop offset="1" stop-color="#8338ec"/>
+  </linearGradient>
+  <linearGradient id="LinearGradient_1" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="-33.75" gradientTransform="translate(110.694 622.569)">
+   <stop offset="0" stop-color="#b00018"/>
+   <stop offset="1" stop-color="#2e030a"/>
+  </linearGradient>
+  <linearGradient id="LinearGradient_2" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="60.017" y2="32.851" gradientTransform="translate(50.319 600.819)">
+   <stop offset="0" stop-color="#6b0616"/>
+   <stop offset="1" stop-color="#ff0023"/>
+  </linearGradient>
+  <linearGradient id="LinearGradient_3" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="-60.018" y2="32.851" gradientTransform="translate(171.069 600.819)">
+   <stop offset="0" stop-color="#450510"/>
+   <stop offset="1" stop-color="#ca001b"/>
+  </linearGradient>
+  <linearGradient id="LinearGradient_4" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="51.945" y2="-60.109" gradientTransform="translate(50.319 715.569)">
+   <stop offset="0" stop-color="#e01f3d"/>
+   <stop offset="1" stop-color="#e5011f"/>
+  </linearGradient>
+  <linearGradient id="LinearGradient_5" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="-51.946" y2="-60.109" gradientTransform="translate(171.069 715.569)">
+   <stop offset="0" stop-color="#cd1432"/>
+   <stop offset="1" stop-color="#ca001b"/>
+  </linearGradient>
+  <radialGradient id="RadialGradient" gradientUnits="userSpaceOnUse" cx="98.252" cy="685.09" r="142.706398062596">
+   <stop offset="0" stop-color="#ef9d1b"/>
+   <stop offset="0.550000011920929" stop-color="#f22946"/>
+   <stop offset="1" stop-color="#320b11"/>
+  </radialGradient>
+  <linearGradient id="LinearGradient_6" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="-24.382" gradientTransform="translate(97.842 656.518)">
+   <stop offset="0" stop-color="#ffffff"/>
+   <stop offset="1" stop-color="#339bf3"/>
+  </linearGradient>
+  <linearGradient id="LinearGradient_7" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="23.244" gradientTransform="translate(122.119 647.531)">
+   <stop offset="0" stop-color="#ffffff"/>
+   <stop offset="1" stop-color="#ffc800"/>
+  </linearGradient>
+ </defs>
+ <g id="Layer 1" transform="scale(1 -1)">
+  <g id="Group" fill-rule="nonzero" stroke-linejoin="miter">
+   <ellipse cx="110.319" cy="652.569" rx="90" ry="90" stroke="none" stroke-width="0.75" fill="url(#LinearGradient)"/>
+   <ellipse cx="110.319" cy="652.569" rx="75" ry="75" fill="#bfdeff" stroke="none" stroke-width="0.75"/>
+   <path d="M 132.069,622.569 L 147.069,601.569 L 110.319,589.569 L 73.569,601.569 L 88.569,622.569 Z" stroke="none" stroke-width="0.75" marker-start="none" marker-end="none" fill="url(#LinearGradient_1)"/>
+   <path d="M 88.569,622.569 L 73.569,601.569 L 50.319,633.069 L 50.319,672.069 L 74.319,663.819 Z" stroke="none" stroke-width="0.75" marker-start="none" marker-end="none" fill="url(#LinearGradient_2)"/>
+   <path d="M 146.319,663.819 L 170.319,672.069 L 170.319,633.069 L 147.069,601.569 L 132.069,622.569 Z" stroke="none" stroke-width="0.75" marker-start="none" marker-end="none" fill="url(#LinearGradient_3)"/>
+   <path d="M 74.319,663.819 L 50.319,672.069 L 73.569,703.569 L 110.319,715.569 L 110.319,690.069 Z" stroke="none" stroke-width="0.75" marker-start="none" marker-end="none" fill="url(#LinearGradient_4)"/>
+   <path d="M 110.319,690.069 L 110.319,715.569 L 147.069,703.569 L 170.319,672.069 L 146.319,663.819 Z" stroke="none" stroke-width="0.75" marker-start="none" marker-end="none" fill="url(#LinearGradient_5)"/>
+   <path d="M 110.319,690.069 L 146.319,663.819 L 132.069,622.569 L 88.569,622.569 L 74.319,663.819 Z" stroke="none" stroke-width="0.75" marker-start="none" marker-end="none" fill="url(#RadialGradient)"/>
+   <mask id="TranspMask">
+    <rect x="-10%" y="-10%" width="120%" height="120%" fill="#8c8c8c" stroke="none"/>
+   </mask>
+   <g id="Group_1" stroke="#2a0308" stroke-width="1.125" mask="url(#TranspMask)">
+    <g id="Group_2">
+     <path d="M 132.069,622.569 L 147.069,601.569 L 110.319,589.569 L 73.569,601.569 L 88.569,622.569 Z" fill="none" marker-start="none" marker-end="none"/>
+     <path d="M 88.569,622.569 L 73.569,601.569 L 50.319,633.069 L 50.319,672.069 L 74.319,663.819 Z" fill="none" marker-start="none" marker-end="none"/>
+     <path d="M 146.319,663.819 L 170.319,672.069 L 170.319,633.069 L 147.069,601.569 L 132.069,622.569 Z" fill="none" marker-start="none" marker-end="none"/>
+     <path d="M 74.319,663.819 L 50.319,672.069 L 73.569,703.569 L 110.319,715.569 L 110.319,690.069 Z" fill="none" marker-start="none" marker-end="none"/>
+     <path d="M 110.319,690.069 L 110.319,715.569 L 147.069,703.569 L 170.319,672.069 L 146.319,663.819 Z" fill="none" marker-start="none" marker-end="none"/>
+     <path d="M 110.319,690.069 L 146.319,663.819 L 132.069,622.569 L 88.569,622.569 L 74.319,663.819 Z" fill="none" marker-start="none" marker-end="none"/>
+    </g>
+   </g>
+   <path d="M 94.995,637.739 L 94.995,656.524 L 88.569,656.524 L 98.455,667.399 L 108.342,656.524 L 101.916,656.524 L 101.916,637.739 Z" stroke="none" stroke-width="0.494" marker-start="none" marker-end="none" fill="url(#LinearGradient_6)"/>
+   <path d="M 118.722,667.399 L 118.722,648.614 L 112.296,648.614 L 122.183,637.739 L 132.069,648.614 L 125.643,648.614 L 125.643,667.399 Z" stroke="none" stroke-width="0.494" marker-start="none" marker-end="none" fill="url(#LinearGradient_7)"/>
+   <ellipse cx="110.319" cy="652.569" rx="90" ry="90" stroke="#0b0f1e" stroke-opacity="0.450980" stroke-width="1.5"/>
+  </g>
+ </g>
+</svg>

@@ -1,0 +1,72 @@
+[project]
+name = "pymmich"
+version = "0.1.0"
+description = "CLI for uploading/downloading folders and files to/from an Immich server"
+readme = "README.md"
+license = { file = "LICENSE.md" }
+authors = [
+    { name = "Marc-André Lemburg", email = "mal@egenix.com" },
+]
+requires-python = ">=3.13"
+keywords = ["immich", "photos", "cli", "upload", "download", "backup"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: System :: Archiving :: Backup",
+]
+dependencies = [
+    "httpx>=0.28.0",
+    "typer>=0.15.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/egenix/pymmich"
+Documentation = "https://github.com/egenix/pymmich"
+Issues = "https://github.com/egenix/pymmich/issues"
+
+[project.scripts]
+pymmich = "pymmich.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
+    "respx>=0.22.0",
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.5.0",
+    # `just` as a pip-installable prebuilt-binary wheel. Lands in
+    # .venv/bin/just so the justfile recipes are always available on
+    # any platform after `uv sync --all-groups` — no separate `just`
+    # install step needed.
+    "rust-just>=1.36.0",
+]
+# Used by `make pyinstaller` to build standalone executables.
+# Kept in its own group so the default `uv sync` / `make venv` don't
+# pull in ~10 MB of PyInstaller machinery for users who only need the
+# PyPI wheel. PyInstaller itself is a pure-Python wheel and needs no
+# compiler to install or run.
+pyinstaller = [
+    "pyinstaller>=6.10.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.9,<0.10"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "pymmich"
+module-root = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"
+
+[tool.coverage.run]
+source = ["src/pymmich"]
+branch = true
