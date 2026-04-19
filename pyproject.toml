@@ -1,6 +1,6 @@
 [project]
 name = "pymmich"
-version = "0.2.0"
+version = "0.3.0"
 description = "CLI for uploading/downloading folders and files to/from an Immich server"
 readme = "README.md"
 license = { file = "LICENSE.md" }
