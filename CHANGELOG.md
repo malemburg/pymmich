@@ -12,8 +12,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   and deploys it to GitHub Pages on every push to `main`.
 - GitHub Actions release workflow triggered by `v*` tags that builds
   sdist + wheel and PyInstaller one-file binaries for Linux, Windows,
-  and macOS (Intel and Apple Silicon), then attaches them to a GitHub
-  Release.
+  and macOS (Apple Silicon), then attaches them to a GitHub Release.
 - Hosted documentation at <https://malemburg.github.io/pymmich/>,
   linked from the README.
 
