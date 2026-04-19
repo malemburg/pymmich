@@ -27,7 +27,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/malemburg/pymmich"
-Documentation = "https://github.com/malemburg/pymmich"
+Documentation = "https://malemburg.github.io/pymmich/"
 Issues = "https://github.com/malemburg/pymmich/issues"
 
 [project.scripts]

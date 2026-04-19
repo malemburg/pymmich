@@ -26,6 +26,11 @@ Immich instance:
 - **Unshare** the same way. If a requested user wasn't actually shared
   on an album, a warning is printed and the command continues.
 
+## Documentation
+
+Full documentation is published at
+**<https://malemburg.github.io/pymmich/>**.
+
 ## Installation
 
 `pymmich` is published on PyPI:
@@ -40,8 +45,9 @@ Python ≥ 3.13 is required. `pymmich` runs on Linux, Windows and macOS.
 
 If you'd rather not have Python on the target machine at all, pymmich
 also ships as a single-file **standalone executable** for each OS
-(produced with PyInstaller). See
-[docs/content/distribution.md](docs/content/distribution.md) for details.
+(produced with PyInstaller). See the
+[distribution docs](https://malemburg.github.io/pymmich/distribution/)
+for details.
 
 ## Configuration
 
@@ -65,8 +71,9 @@ permissions, the current set of permissions `pymmich` needs is:
 `albumUser.delete`, `asset.read`, `asset.upload`, `asset.download`,
 `user.read`.
 
-See [docs/content/api-permissions.md](docs/content/api-permissions.md) for the per-command
-breakdown.
+See the
+[API key permissions docs](https://malemburg.github.io/pymmich/api-permissions/)
+for the per-command breakdown.
 
 ## Usage
 
