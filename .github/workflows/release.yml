@@ -107,6 +107,16 @@ jobs:
             -exec sh -c 'cp "$1"/pymmich-* release/' _ {} \;
           ls -la release
 
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          tag="${GITHUB_REF##refs/tags/}"
+          version="${tag#v}"
+          python3 scripts/extract_changelog.py "$version" > release_notes.md
+          echo "Release notes for $version:"
+          echo "----"
+          cat release_notes.md
+          echo "----"
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -120,6 +130,6 @@ jobs:
           gh release create "$tag" \
             --repo "$GITHUB_REPOSITORY" \
             --title "$tag" \
-            --generate-notes \
+            --notes-file release_notes.md \
             $prerelease_flag \
             release/*
