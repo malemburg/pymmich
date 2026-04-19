@@ -33,6 +33,7 @@ matches, the target is treated as a **filename glob** (e.g. `*.jpg`,
 | Option                | Description                                                         |
 | --------------------- | ------------------------------------------------------------------- |
 | `-d, --dir PATH`                         | Destination directory. Defaults to the current directory.    |
+| `-f, --force`                            | Overwrite pre-existing local files. Default: rename the incoming file with a numbered suffix (`foo.jpg` → `foo_1.jpg`) and print a warning. |
 | `-s, --case-sensitive / -i, --case-insensitive` | Toggle case-sensitive album matching. Default: case-insensitive. |
 | `--only-owned`                           | Only consider albums you own (skip albums shared with you).  |
 | `-h, --help`                             | Show help.                                                   |
@@ -51,6 +52,10 @@ pymmich download "Vacation 2024" "IMG_*.heic" --dir ./restore
 
 # Strict: ignore albums that were shared with you, only pull your own.
 pymmich download "Vacation 2024" --dir ./backup --only-owned
+
+# Overwrite any local files that happen to have the same name as the
+# incoming ones (default is to save the incoming file as foo_1.jpg).
+pymmich download "Vacation 2024" --dir ./backup --force
 ```
 
 ## Exit codes

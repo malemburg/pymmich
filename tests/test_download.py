@@ -256,6 +256,55 @@ def test_download_short_i_forces_case_insensitive(
     assert result.exit_code == 0, result.stdout
 
 
+def test_download_renames_on_local_collision_by_default(
+    tmp_path: Path, mock_router, base_url, api_key, monkeypatch
+):
+    """A pre-existing local file must not be overwritten; instead the
+    incoming file is saved with a numbered suffix and a warning is
+    printed."""
+    _cli_env(monkeypatch, base_url, api_key)
+    out = tmp_path / "out"
+    album_dir = out / "Vacation"
+    album_dir.mkdir(parents=True)
+    (album_dir / "one.jpg").write_bytes(b"OLD")
+
+    mock_router.get("/api/albums").respond(
+        200, json=[{"id": "alb-1", "albumName": "Vacation", "assetCount": 1}]
+    )
+    _mock_album_assets(mock_router, [_asset("a1", "one.jpg")])
+    mock_router.get("/api/assets/a1/original").respond(200, content=b"NEW")
+
+    result = runner.invoke(app, ["download", "Vacation", "--dir", str(out)])
+    assert result.exit_code == 0, result.stderr
+    assert (album_dir / "one.jpg").read_bytes() == b"OLD"
+    assert (album_dir / "one_1.jpg").read_bytes() == b"NEW"
+    assert "one_1.jpg" in result.stderr
+
+
+def test_download_force_overwrites_local_file(
+    tmp_path: Path, mock_router, base_url, api_key, monkeypatch
+):
+    """``--force`` must overwrite an existing local file."""
+    _cli_env(monkeypatch, base_url, api_key)
+    out = tmp_path / "out"
+    album_dir = out / "Vacation"
+    album_dir.mkdir(parents=True)
+    (album_dir / "one.jpg").write_bytes(b"OLD")
+
+    mock_router.get("/api/albums").respond(
+        200, json=[{"id": "alb-1", "albumName": "Vacation", "assetCount": 1}]
+    )
+    _mock_album_assets(mock_router, [_asset("a1", "one.jpg")])
+    mock_router.get("/api/assets/a1/original").respond(200, content=b"NEW")
+
+    result = runner.invoke(
+        app, ["download", "Vacation", "--dir", str(out), "--force"]
+    )
+    assert result.exit_code == 0, result.stderr
+    assert (album_dir / "one.jpg").read_bytes() == b"NEW"
+    assert not (album_dir / "one_1.jpg").exists()
+
+
 def test_download_only_owned_skips_shared_query(
     tmp_path: Path, mock_router, base_url, api_key, monkeypatch
 ):

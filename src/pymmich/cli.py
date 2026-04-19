@@ -142,6 +142,28 @@ def _collect_media_files(
     return files
 
 
+def _next_unique_name(original: str, used: set[str]) -> str:
+    """Return the first ``<stem>_N<ext>`` not in ``used`` (N starting at 1).
+
+    If ``original`` is not in ``used``, it is returned unchanged. The
+    caller is expected to add the returned name to ``used`` before the
+    next lookup.
+    """
+    if original not in used:
+        return original
+    stem, dot, ext = original.rpartition(".")
+    if not dot:
+        stem, ext = original, ""
+    else:
+        ext = "." + ext
+    n = 1
+    while True:
+        candidate = f"{stem}_{n}{ext}"
+        if candidate not in used:
+            return candidate
+        n += 1
+
+
 def _set_file_mtime(path: Path, when: dt.datetime) -> None:
     """Set ``atime`` and ``mtime`` of ``path`` to ``when``."""
     ts = when.timestamp()
@@ -164,6 +186,26 @@ def upload(
         "--recursive",
         "-r",
         help="Recurse into subdirectories when scanning a directory.",
+    ),
+    album: str = typer.Option(
+        None,
+        "--album",
+        "-a",
+        help=(
+            "Upload every input (files and files found in directories) "
+            "into this single target album, ignoring per-directory album "
+            "creation."
+        ),
+    ),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        "-f",
+        help=(
+            "Allow existing filenames on the server to be overwritten. "
+            "Default: rename the incoming file with a numbered suffix "
+            "(foo.jpg -> foo_1.jpg) to keep both files distinct."
+        ),
     ),
     case_sensitive: bool = typer.Option(
         False,
@@ -188,7 +230,8 @@ def upload(
     """Upload files and directories to Immich.
 
     Directories are uploaded as albums (created if missing); individual
-    files are uploaded without album association.
+    files are uploaded without album association unless ``--album`` is
+    set, in which case every input goes into that album.
     """
     include_shared = not only_owned
     with _make_client() as client:
@@ -202,6 +245,63 @@ def upload(
         total_uploaded = 0
         total_skipped = 0
 
+        # Cache of filename->bool "this name already exists on the server
+        # for the current user" for non-album uploads. Populated lazily.
+        global_name_cache: dict[str, bool] = {}
+
+        if album is not None:
+            # Single target album for everything: resolve (or create) it
+            # once and collect all media files up-front.
+            try:
+                target_album = client.ensure_album(
+                    album,
+                    case_sensitive=case_sensitive,
+                    include_shared=include_shared,
+                )
+            except ImmichError as exc:
+                typer.echo(
+                    f"pymmich: failed to prepare album {album!r}: {exc}",
+                    err=True,
+                )
+                raise typer.Exit(code=1) from exc
+
+            used_names = _album_used_names(client, target_album.id)
+            files: list[Path] = []
+            for path in paths:
+                if path.is_file():
+                    if path.suffix.lower() not in allowed:
+                        typer.echo(
+                            f"Skipping {path}: unsupported extension", err=True
+                        )
+                        total_skipped += 1
+                        continue
+                    files.append(path)
+                elif path.is_dir():
+                    files.extend(_collect_media_files(path, allowed, recursive))
+                else:
+                    typer.echo(
+                        f"Skipping {path}: not a file or directory", err=True
+                    )
+
+            if files:
+                typer.echo(
+                    f"Uploading {len(files)} file(s) to album "
+                    f"{target_album.album_name!r}"
+                )
+                asset_ids = _upload_files_to_album(
+                    client, files, used_names, force=force
+                )
+                total_uploaded += len(asset_ids)
+                if asset_ids:
+                    _add_to_album_or_exit(client, target_album, asset_ids)
+
+            typer.echo(
+                f"Done: uploaded {total_uploaded} file(s), "
+                f"skipped {total_skipped} unsupported file(s)."
+            )
+            return
+
+        # Default: per-path album logic; standalone files go unassociated.
         for path in paths:
             if path.is_file():
                 if path.suffix.lower() not in allowed:
@@ -210,7 +310,7 @@ def upload(
                     )
                     total_skipped += 1
                     continue
-                _do_upload_file(client, path)
+                _upload_standalone(client, path, global_name_cache, force=force)
                 total_uploaded += 1
                 continue
 
@@ -225,7 +325,7 @@ def upload(
 
             album_name = path.name
             try:
-                album = client.ensure_album(
+                dir_album = client.ensure_album(
                     album_name,
                     case_sensitive=case_sensitive,
                     include_shared=include_shared,
@@ -237,29 +337,16 @@ def upload(
                 )
                 raise typer.Exit(code=1) from exc
 
+            used_names = _album_used_names(client, dir_album.id)
             typer.echo(
-                f"Uploading {len(files)} file(s) to album {album.album_name!r}"
+                f"Uploading {len(files)} file(s) to album {dir_album.album_name!r}"
             )
-            asset_ids: list[str] = []
-            for f in files:
-                try:
-                    result = _do_upload_file(client, f)
-                except ImmichError as exc:
-                    typer.echo(f"pymmich: upload of {f} failed: {exc}", err=True)
-                    raise typer.Exit(code=1) from exc
-                asset_ids.append(result)
-                total_uploaded += 1
-
+            asset_ids = _upload_files_to_album(
+                client, files, used_names, force=force
+            )
+            total_uploaded += len(asset_ids)
             if asset_ids:
-                try:
-                    client.add_assets_to_album(album.id, asset_ids)
-                except ImmichError as exc:
-                    typer.echo(
-                        f"pymmich: failed to add assets to album "
-                        f"{album.album_name!r}: {exc}",
-                        err=True,
-                    )
-                    raise typer.Exit(code=1) from exc
+                _add_to_album_or_exit(client, dir_album, asset_ids)
 
         typer.echo(
             f"Done: uploaded {total_uploaded} file(s), "
@@ -267,10 +354,132 @@ def upload(
         )
 
 
-def _do_upload_file(client: ImmichClient, path: Path) -> str:
+def _album_used_names(client: ImmichClient, album_id: str) -> set[str]:
+    """Return the set of original filenames already present in ``album_id``."""
+    try:
+        return {
+            a.original_file_name
+            for a in client.search_assets_by_album(album_id)
+        }
+    except ImmichError as exc:
+        typer.echo(
+            f"pymmich: failed to read existing album contents: {exc}", err=True
+        )
+        raise typer.Exit(code=1) from exc
+
+
+def _upload_files_to_album(
+    client: ImmichClient,
+    files: list[Path],
+    used_names: set[str],
+    *,
+    force: bool,
+) -> list[str]:
+    """Upload ``files`` into an album, renaming on collision unless ``force``.
+
+    ``used_names`` is mutated in-place to track names already claimed
+    during this batch, so two local files with identical names don't
+    collide with each other either.
+    """
+    asset_ids: list[str] = []
+    for path in files:
+        upload_name = path.name
+        if not force and upload_name in used_names:
+            upload_name = _next_unique_name(path.name, used_names)
+            typer.echo(
+                f"pymmich: warning: {path.name!r} already exists in album; "
+                f"uploading as {upload_name!r} instead.",
+                err=True,
+            )
+        used_names.add(upload_name)
+        try:
+            asset_ids.append(_do_upload_file(client, path, upload_name))
+        except ImmichError as exc:
+            typer.echo(f"pymmich: upload of {path} failed: {exc}", err=True)
+            raise typer.Exit(code=1) from exc
+    return asset_ids
+
+
+def _add_to_album_or_exit(
+    client: ImmichClient, album: Album, asset_ids: list[str]
+) -> None:
+    try:
+        client.add_assets_to_album(album.id, asset_ids)
+    except ImmichError as exc:
+        typer.echo(
+            f"pymmich: failed to add assets to album "
+            f"{album.album_name!r}: {exc}",
+            err=True,
+        )
+        raise typer.Exit(code=1) from exc
+
+
+def _upload_standalone(
+    client: ImmichClient,
+    path: Path,
+    cache: dict[str, bool],
+    *,
+    force: bool,
+) -> None:
+    """Upload a single file with no album, renaming on global collision."""
+    upload_name = path.name
+    if not force:
+        used: set[str] = set()
+        # Materialise just enough filename matches to decide if we collide.
+        if upload_name not in cache:
+            cache[upload_name] = _server_has_filename(client, upload_name)
+        if cache[upload_name]:
+            used.add(upload_name)
+            # Probe sibling names the same way, lazily, until a free one
+            # shows up. The probe cost is at most O(collisions).
+            stem, dot, ext = upload_name.rpartition(".")
+            if not dot:
+                stem, ext = upload_name, ""
+            else:
+                ext = "." + ext
+            n = 1
+            while True:
+                cand = f"{stem}_{n}{ext}"
+                if cand not in cache:
+                    cache[cand] = _server_has_filename(client, cand)
+                if not cache[cand]:
+                    upload_name = cand
+                    break
+                used.add(cand)
+                n += 1
+            typer.echo(
+                f"pymmich: warning: {path.name!r} already exists on the "
+                f"server; uploading as {upload_name!r} instead.",
+                err=True,
+            )
+        # Mark the chosen name as taken so the next standalone upload in
+        # this batch doesn't pick it again.
+        cache[upload_name] = True
+    _do_upload_file(client, path, upload_name)
+
+
+def _server_has_filename(client: ImmichClient, filename: str) -> bool:
+    """Return True if any of the caller's assets already has this filename."""
+    try:
+        for asset in client.search_assets_by_filename(filename):
+            if asset.original_file_name == filename:
+                return True
+    except ImmichError as exc:
+        typer.echo(f"pymmich: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    return False
+
+
+def _do_upload_file(
+    client: ImmichClient, path: Path, filename: str | None = None
+) -> str:
     """Upload a single file, print a status line, return its asset id."""
-    typer.echo(f"  + {path}")
-    result = client.upload_asset(path)
+    label = filename if filename and filename != path.name else str(path)
+    if filename and filename != path.name:
+        typer.echo(f"  + {path} -> {filename}")
+    else:
+        typer.echo(f"  + {label}")
+    result = client.upload_asset(path, filename=filename)
     return result.id
 
 
@@ -292,6 +501,16 @@ def download(
         "--dir",
         "-d",
         help="Local directory to download into (default: current dir).",
+    ),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        "-f",
+        help=(
+            "Overwrite pre-existing local files. Default: rename the "
+            "incoming file with a numbered suffix (foo.jpg -> foo_1.jpg) "
+            "so no existing file is lost."
+        ),
     ),
     case_sensitive: bool = typer.Option(
         False,
@@ -329,7 +548,7 @@ def download(
                 include_shared=include_shared,
             )
             if album is not None:
-                _download_album(client, album, dir)
+                _download_album(client, album, dir, force=force)
                 matched_any = True
                 continue
 
@@ -343,7 +562,7 @@ def download(
                 continue
 
             for asset in assets:
-                _download_asset(client, asset, dir)
+                _download_asset(client, asset, dir, force=force)
             matched_any = True
 
         if not matched_any:
@@ -371,7 +590,9 @@ def _match_assets_by_glob(
     return matches
 
 
-def _download_album(client: ImmichClient, album: Album, root: Path) -> None:
+def _download_album(
+    client: ImmichClient, album: Album, root: Path, *, force: bool
+) -> None:
     """Download every asset of ``album`` into ``root / album.name``."""
     target_dir = root / album.album_name
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -384,7 +605,7 @@ def _download_album(client: ImmichClient, album: Album, root: Path) -> None:
 
     oldest: dt.datetime | None = None
     for asset in assets:
-        _download_asset(client, asset, target_dir)
+        _download_asset(client, asset, target_dir, force=force)
         if oldest is None or asset.file_created_at < oldest:
             oldest = asset.file_created_at
     if oldest is not None:
@@ -392,11 +613,29 @@ def _download_album(client: ImmichClient, album: Album, root: Path) -> None:
 
 
 def _download_asset(
-    client: ImmichClient, asset: AssetInfo, target_dir: Path
+    client: ImmichClient, asset: AssetInfo, target_dir: Path, *, force: bool
 ) -> None:
-    """Download a single asset and stamp its mtime with the asset's date."""
-    dest = target_dir / asset.original_file_name
-    typer.echo(f"  < {asset.original_file_name}")
+    """Download a single asset and stamp its mtime with the asset's date.
+
+    When ``force`` is false and a file with the same name already exists
+    in ``target_dir``, the incoming file is renamed with a ``_N`` suffix
+    and a warning is printed.
+    """
+    dest_name = asset.original_file_name
+    if not force and (target_dir / dest_name).exists():
+        used = {p.name for p in target_dir.iterdir()}
+        new_name = _next_unique_name(dest_name, used)
+        typer.echo(
+            f"pymmich: warning: {dest_name!r} already exists in "
+            f"{target_dir}; saving as {new_name!r} instead.",
+            err=True,
+        )
+        dest_name = new_name
+    dest = target_dir / dest_name
+    if dest_name == asset.original_file_name:
+        typer.echo(f"  < {asset.original_file_name}")
+    else:
+        typer.echo(f"  < {asset.original_file_name} -> {dest_name}")
     client.download_asset(asset.id, dest)
     _set_file_mtime(dest, asset.file_created_at)
 

@@ -26,6 +26,8 @@ pymmich upload [OPTIONS] PATHS...
 | Option                                   | Description                                                           |
 | ---------------------------------------- | --------------------------------------------------------------------- |
 | `-r, --recursive`                        | Recurse into subdirectories when scanning a directory.                |
+| `-a, --album NAME`                       | Upload every input (files and files found in directories) into this single target album, ignoring per-directory album creation. |
+| `-f, --force`                            | Allow existing filenames on the server to be reused. Default: rename the incoming file with a numbered suffix (`foo.jpg` → `foo_1.jpg`) and print a warning. |
 | `-s, --case-sensitive / -i, --case-insensitive` | Toggle case-sensitive directory-to-album matching. Default: case-insensitive. |
 | `--only-owned`                           | Only consider albums you own when matching (skip shared).             |
 | `-h, --help`                             | Show help.                                                            |
@@ -54,6 +56,13 @@ pymmich upload ~/Pictures/Trip2024 --recursive
 
 # Force exact-case album name matching.
 pymmich upload ./Trip --case-sensitive
+
+# Put everything — the standalone file and every file in both dirs —
+# into one single album called "Backlog 2024".
+pymmich upload ./loose.jpg ~/Pictures/Day1 ~/Pictures/Day2 --album "Backlog 2024"
+
+# Don't rename on filename collision; upload as-is (server decides).
+pymmich upload ~/Pictures/Trip --force
 ```
 
 ## Exit codes

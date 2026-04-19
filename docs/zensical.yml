@@ -1,7 +1,7 @@
 site_name: pymmich
 site_description: CLI for uploading and downloading folders and files to/from an Immich server
-site_url: https://github.com/egenix/pymmich
-repo_url: https://github.com/egenix/pymmich
+site_url: https://github.com/malemburg/pymmich
+repo_url: https://github.com/malemburg/pymmich
 edit_uri: ""
 
 # Paths are resolved relative to this config file (docs/zensical.yml).
@@ -29,6 +29,7 @@ nav:
   - API key permissions: api-permissions.md
   - Distribution: distribution.md
   - Development: development.md
+  - Changelog: changelog.md
 
 markdown_extensions:
   - admonition

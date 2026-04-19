@@ -610,12 +610,16 @@ class ImmichClient:
         path: Path,
         *,
         is_favorite: bool = False,
+        filename: str | None = None,
     ) -> UploadResult:
         """Upload a single file as an Immich asset.
 
         Args:
             path: Path to the file to upload.
             is_favorite: Mark the asset as a favourite after upload.
+            filename: Override the filename reported to the server; used
+                by the upload command to avoid filename collisions in a
+                target album. ``None`` (default) keeps ``path.name``.
 
         Returns:
             The server-assigned asset id together with the upload status
@@ -624,8 +628,9 @@ class ImmichClient:
         stat = path.stat()
         created = dt.datetime.fromtimestamp(stat.st_mtime, tz=dt.UTC)
         modified = created
+        upload_name = filename or path.name
         data = {
-            "deviceAssetId": f"{path.name}-{int(stat.st_mtime)}-{stat.st_size}",
+            "deviceAssetId": f"{upload_name}-{int(stat.st_mtime)}-{stat.st_size}",
             "deviceId": "pymmich",
             # Must match the regex `...(:\.\d+)?Z$` the server enforces.
             # datetime.isoformat() yields microseconds when st_mtime has
@@ -635,10 +640,10 @@ class ImmichClient:
             "fileModifiedAt": _isoformat_z(modified),
             "isFavorite": "true" if is_favorite else "false",
         }
-        mime, _ = mimetypes.guess_type(path.name)
+        mime, _ = mimetypes.guess_type(upload_name)
         mime = mime or "application/octet-stream"
         with path.open("rb") as fh:
-            files = {"assetData": (path.name, fh, mime)}
+            files = {"assetData": (upload_name, fh, mime)}
             assert self._http is not None, "ImmichClient has been closed"
             try:
                 response = self._http.post(

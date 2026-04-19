@@ -1,6 +1,6 @@
 [project]
 name = "pymmich"
-version = "0.1.0"
+version = "0.2.0"
 description = "CLI for uploading/downloading folders and files to/from an Immich server"
 readme = "README.md"
 license = { file = "LICENSE.md" }
@@ -26,9 +26,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/egenix/pymmich"
-Documentation = "https://github.com/egenix/pymmich"
-Issues = "https://github.com/egenix/pymmich/issues"
+Homepage = "https://github.com/malemburg/pymmich"
+Documentation = "https://github.com/malemburg/pymmich"
+Issues = "https://github.com/malemburg/pymmich/issues"
 
 [project.scripts]
 pymmich = "pymmich.cli:app"

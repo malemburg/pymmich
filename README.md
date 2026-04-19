@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/content/assets/logo.svg" alt="pymmich logo" width="180"/>
+  <img src="https://raw.githubusercontent.com/malemburg/pymmich/main/docs/content/assets/logo.svg" alt="pymmich logo" width="180"/>
 </p>
 
 # pymmich
@@ -122,6 +122,10 @@ build management; install it first via `pip install uv` or your OS
 package manager. `just` itself is delivered as a pip-installable wheel
 (`rust-just` on PyPI), so the whole toolchain is cross-platform and
 needs no C compiler.
+
+## Changelog
+
+Release notes live in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

@@ -35,6 +35,17 @@ build:
 # Alias for `build` so `just dist` works too.
 dist: build
 
+# Publish sdist + wheel from ./dist to PyPI. Credentials come from
+# UV_PUBLISH_TOKEN (preferred) or UV_PUBLISH_USERNAME/UV_PUBLISH_PASSWORD.
+# Rebuilds first to ensure the uploaded artefacts match the current tree.
+publish: clean build
+    uv publish
+
+# Publish sdist + wheel to TestPyPI (https://test.pypi.org) for
+# release dry-runs. Use a TestPyPI-specific token in UV_PUBLISH_TOKEN.
+publish-test: clean build
+    uv publish --publish-url https://test.pypi.org/legacy/
+
 # Build a standalone one-file binary into ./dist/pyinstaller/.
 pyinstaller:
     uv python install {{PYTHON_VERSION}}
